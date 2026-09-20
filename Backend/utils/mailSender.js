@@ -34,20 +34,21 @@ const nodemailer = require("nodemailer");
 
 const mailSender = async (email, title, body) => {
     try {
+        // DNS lookup to avoid IPv6 issues on Render
+        const dns = require('dns');
+        dns.setDefaultResultOrder('ipv4first');
+
         const transporter = nodemailer.createTransport({
             host: process.env.MAIL_HOST,
-            port: 587,
-            secure: false,
-            family: 4,  // Force IPv4
-            tls: {
-                rejectUnauthorized: false
-            },
-            connectionTimeout: 30000,
-            socketTimeout: 30000,
+            port: 465,
+            secure: true,
+            family: 4,  // Force IPv4 only
             auth: {
                 user: process.env.MAIL_USER,
                 pass: process.env.MAIL_PASS,
             },
+            connectionTimeout: 10000,
+            socketTimeout: 10000,
         });
 
         const info = await transporter.sendMail({
@@ -67,7 +68,6 @@ const mailSender = async (email, title, body) => {
 };
 
 module.exports = mailSender;
-
 
 
 

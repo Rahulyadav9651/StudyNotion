@@ -46,8 +46,8 @@ const mailSender = async (email, title, body) => {
 
 const transporter = nodemailer.createTransport({
     host: process.env.MAIL_HOST,
-    port: 465,
-    secure: true,
+    port: 587,  // Change from 465 to 587
+    secure: false,  // Change to false for port 587
     family: 4,
     connectionTimeout: 30000,
     greetingTimeout: 30000,
@@ -57,7 +57,6 @@ const transporter = nodemailer.createTransport({
         pass: process.env.MAIL_PASS,
     },
 });
-
 
         
 

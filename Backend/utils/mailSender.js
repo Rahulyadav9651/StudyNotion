@@ -41,14 +41,20 @@ const mailSender = async (email, title, body) => {
             host: "smtp.gmail.com",
             port: 465,
             secure: true,
+
+            // Force IPv4
+            family: 4,
+
             auth: {
                 user: process.env.MAIL_USER,
                 pass: process.env.MAIL_PASS,
             },
+
             connectionTimeout: 10000,
         });
 
         await transporter.verify();
+
         console.log("✅ SMTP connection successful");
 
         const info = await transporter.sendMail({
@@ -59,6 +65,7 @@ const mailSender = async (email, title, body) => {
         });
 
         console.log("✅ Email sent successfully:", info.messageId);
+
         return info;
 
     } catch (error) {

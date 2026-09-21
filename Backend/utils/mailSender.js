@@ -29,34 +29,38 @@
 // module.exports = mailSender;
 
 
-const nodemailer = require("nodemailer");
+const brevo = require("@getbrevo/brevo");
 
-console.log("SMTP USER:", process.env.BREVO_SMTP_USER ? "FOUND" : "MISSING");
-console.log("SMTP KEY:", process.env.BREVO_SMTP_KEY ? "FOUND" : "MISSING");
+const apiInstance = new brevo.TransactionalEmailsApi();
 
-const transporter = nodemailer.createTransport({
-    host: "smtp-relay.brevo.com",
-    port: 587,
-    secure: false,
-    auth: {
-        user: process.env.BREVO_SMTP_USER,
-        pass: process.env.BREVO_SMTP_KEY,
-    },
-});
+apiInstance.setApiKey(
+    brevo.TransactionalEmailsApiApiKeys.apiKey,
+    process.env.BREVO_API_KEY
+);
 
 const mailSender = async (email, title, body) => {
     try {
-        const info = await transporter.sendMail({
-            from: process.env.BREVO_FROM_EMAIL,
-            to: email,
-            subject: title,
-            html: body,
-        });
+        const sendSmtpEmail = new brevo.SendSmtpEmail();
 
-        console.log("✅ Email sent:", info.messageId);
-        return info;
+        sendSmtpEmail.subject = title;
+        sendSmtpEmail.htmlContent = body;
+        sendSmtpEmail.sender = {
+            name: "StudyNotion",
+            email: process.env.BREVO_FROM_EMAIL,
+        };
+        sendSmtpEmail.to = [
+            {
+                email: email,
+            },
+        ];
+
+        const result = await apiInstance.sendTransacEmail(sendSmtpEmail);
+
+        console.log("✅ Email sent:", result);
+        return result;
+
     } catch (error) {
-        console.error("❌ Error occurred while sending email:", error);
+        console.error("❌ Brevo API email error:", error);
         throw error;
     }
 };

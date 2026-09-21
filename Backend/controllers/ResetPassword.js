@@ -20,7 +20,7 @@ const token= crypto.randomUUID();
 //update user by adding token and expiration time
 const updatedDetails= await User.findOneAndUpdate({email},{token:token,resetPasswordExpires:Date.now()+20*60*1000},{new: true})
 //link generate
-const url= `http://localhost:5173/update-password/${token}`
+const url= `https://studynotion-94c5e.web.app/update-password/${token}`
 //send email
 await mailSender(email,"Password Rest Link",`Password Reset Link :${url}`)
 

@@ -79,7 +79,7 @@ function Navbar() {
                           <p className="text-center">
                             <LuLoader />
                           </p>
-                        ) : subLinks.length ? (
+                        ) : subLinks?.length ? (
                           <>
                             {subLinks?.map((subLink, i) => (
                               <Link

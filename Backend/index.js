@@ -1,3 +1,6 @@
+
+ require("dotenv").config();
+
 const dns = require("dns");
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
 const express= require("express");
@@ -17,7 +20,7 @@ const {cloudinaryConnect}= require("./config/cloudinary");
 //const fileUpload= require("express-fileupload");
 const fileUpload = require("express-fileupload");
 
- require("dotenv").config();
+
 
  const PORT= process.env.PORT || 4000;
  //databseConnect
@@ -25,14 +28,14 @@ const fileUpload = require("express-fileupload");
  app.use(express.json());
  app.use(cookieParser());
  app.use(
-    // cors({
-    //     origin:"http://localhost:5173",
-    //     credentials:true,
-    // })
-cors({
-    origin: "https://your-frontend.onrender.com",
-    credentials: true,
-})
+    cors({
+        origin:"http://localhost:5173",
+        credentials:true,
+    })
+// cors({
+//     origin: "https://your-frontend.onrender.com",
+//     credentials: true,
+// })
 
 
 

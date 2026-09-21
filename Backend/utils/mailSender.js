@@ -29,38 +29,44 @@
 // module.exports = mailSender;
 
 
-const brevo = require("@getbrevo/brevo");
-
-const apiInstance = new brevo.TransactionalEmailsApi();
-
-apiInstance.setApiKey(
-    brevo.TransactionalEmailsApiApiKeys.apiKey,
-    process.env.BREVO_API_KEY
-);
-
 const mailSender = async (email, title, body) => {
     try {
-        const sendSmtpEmail = new brevo.SendSmtpEmail();
-
-        sendSmtpEmail.subject = title;
-        sendSmtpEmail.htmlContent = body;
-        sendSmtpEmail.sender = {
-            name: "StudyNotion",
-            email: process.env.BREVO_FROM_EMAIL,
-        };
-        sendSmtpEmail.to = [
+        const response = await fetch(
+            "https://api.brevo.com/v3/smtp/email",
             {
-                email: email,
-            },
-        ];
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "api-key": process.env.BREVO_API_KEY,
+                },
+                body: JSON.stringify({
+                    sender: {
+                        name: "StudyNotion",
+                        email: process.env.BREVO_FROM_EMAIL,
+                    },
+                    to: [
+                        {
+                            email: email,
+                        },
+                    ],
+                    subject: title,
+                    htmlContent: body,
+                }),
+            }
+        );
 
-        const result = await apiInstance.sendTransacEmail(sendSmtpEmail);
+        const data = await response.json();
 
-        console.log("✅ Email sent:", result);
-        return result;
+        if (!response.ok) {
+            console.error("❌ Brevo API Error:", data);
+            throw new Error(data.message || "Brevo email failed");
+        }
+
+        console.log("✅ Email sent:", data.messageId);
+        return data;
 
     } catch (error) {
-        console.error("❌ Brevo API email error:", error);
+        console.error("❌ Error occurred while sending email:", error);
         throw error;
     }
 };
